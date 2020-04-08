@@ -179,11 +179,13 @@ git add haproxy.cfg cluster.yaml config.yaml footloose.yaml machines.yaml flux.y
 git diff-index --quiet HEAD || git commit -m "Initial cluster configuration" || true
 git push "${git_remote}" HEAD || true
 
+set -x
 log "Installing Kubernetes cluster"
 apply_args=(
   "--git-url=$(git_http_url "$(git_remote_fetchurl "${git_remote}")")"
   "--git-branch=$(git_current_branch)"
 )
 [ "${git_deploy_key}" ] && apply_args+=("${git_deploy_key}")
+echo "${apply_args[@]}"
 wksctl -v apply "${apply_args[@]}"
 wksctl kubeconfig
